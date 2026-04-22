@@ -378,7 +378,7 @@ const CARDIO={key:'cardio',name:'Cardio — Treadmill',emoji:'🏃',type:'cardio
 const REST  ={key:'rest',  name:'Rest Day',              emoji:'😴',type:'rest'};
 const OPTDAY={key:'opt',   name:'Optional — Walk/Yoga',  emoji:'🧘',type:'opt'};
 const SCHED=[REST,UPPER_A,LOWER_A,CARDIO,UPPER_B,LOWER_B,OPTDAY];
-const SESSIONS={upperA:UPPER_A,upperB:UPPER_B,lowerA:LOWER_A,lowerB:LOWER_B};
+const SESSIONS={upperA:UPPER_A,upperB:UPPER_B,lowerA:LOWER_A,lowerB:LOWER_B,cardio:CARDIO,opt:OPTDAY};
 const DNAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const ACT_A=[{name:'Glute Bridge BW × 20',note:'Progress to banded week 2+'},{name:'Clamshell × 15–25 each side',note:'Progress reps each week'},{name:'Lateral Band Walk × 20–30 steps each dir.',note:''}];
 const ACT_B=[{name:'Glute Bridge BW × 20',note:'Progress to banded week 2+'},{name:'Fire Hydrant × 15–25 each side',note:''},{name:'Donkey Kick × 15–25 each side',note:''},{name:'Single-Leg Glute Bridge × 12–15 ea',note:'Add from week 3'}];
@@ -434,7 +434,8 @@ let _editKey='';    // current exercise being edited
 
 function todayDow(){return new Date().getDay()}
 function curDow(){return((todayDow()+DOF)%7+7)%7}
-function getDS(off){const d=new Date();d.setDate(d.getDate()+(off??DOF));return d.toISOString().slice(0,10)}
+function localDS(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function getDS(off){const d=new Date();d.setDate(d.getDate()+(off??DOF));return localDS(d)}
 function skey(sk,ei,si){return `${getDS()}_${sk}_${ei}_${si}`}
 function dkey(sk,ei,w){return `${sk}_w${w}_ex${ei}`}
 
@@ -742,21 +743,22 @@ function renderToday(){
     const mk=SESSIONS[sk];if(!mk)return;
     const prevD=new Date(ds+'T00:00:00');prevD.setDate(prevD.getDate()-1);
     out+=`<div class="makeup-hdr"><div class="makeup-pill">📌 Makeup</div><div class="makeup-from">From ${DNAMES[prevD.getDay()]}</div><div class="makeup-div"></div></div>`;
-    out+=renderWorkoutDay(mk,true);
+    if(mk.type==='cardio')out+=renderCardioDay(mk,true);
+    else if(mk.exercises)out+=renderWorkoutDay(mk,true);
   });
 
   document.getElementById('tab-today').innerHTML=out;
 }
 
-function renderCardioDay(sess){
+function renderCardioDay(sess,isMakeup=false){
   const i=CW<=2?0:CW<=4?1:2;
   const cp=CARDIO_PROTO[i];
   const burn=estimateBurn('cardio',CW,1);
-  const ds=getDS(),sk=SKIPS[ds]===sess.key;
+  const ds=getDS(),sk=!isMakeup&&SKIPS[ds]===sess.key;
   return`<div class="sess-hdr"><div class="sess-ico">🏃</div><div class="sess-det">
-    <div class="sess-name">Cardio — Treadmill</div>
+    <div class="sess-name">Cardio — Treadmill${isMakeup?' <span style="font-size:10px;color:var(--accent)">(Makeup)</span>':''}</div>
     <div class="sess-meta"><span class="meta-chip">📍 ${cp.type}</span><span class="meta-chip">⏱ ~45 min</span><span class="burn-chip">🔥 ~${burn} kcal</span></div>
-    <button class="skip-btn" onclick="skipWorkout()">${sk?'↩ Undo Skip':'⏭ Skip to Tomorrow'}</button>
+    ${!isMakeup?`<button class="skip-btn" onclick="skipWorkout()">${sk?'↩ Undo Skip':'⏭ Skip to Tomorrow'}</button>`:''}
   </div></div>
   ${coll(`${cp.wk} — ${cp.type}`,'🔥',`<p style="font-size:13px;color:var(--text2);line-height:1.7">${cp.text}</p>
     <p style="margin-top:8px;font-size:12px;color:${i>0?'var(--accent)':'var(--accent2)'};font-weight:700">${i>0?'⚡ HIIT — push hard on sprints':'💚 LISS — conversational pace'}</p>`,true)}`;
