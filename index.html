@@ -681,6 +681,7 @@ function goTab(tab,btn){
   document.getElementById('tab-'+tab).classList.add('on');
   if(btn)btn.classList.add('on');
   window.scrollTo(0,0);
+  if(tab==='today')renderToday();
   if(tab==='log')setTimeout(()=>renderLog(),10);
   if(tab==='progress')setTimeout(()=>renderProgress(),10);
 }
