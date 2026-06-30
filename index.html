@@ -924,6 +924,10 @@ function renderToday(){
   const dow=curDow(),isToday=DOF===0,ds=getDS();
   const sess=getEffSess(ds)||SCHED[dow];
   const cw=viewedCW();
+  const ph0=phase(cw);
+  const wkLblEl=document.getElementById('wkLbl'),wkPhaseEl=document.getElementById('wkPhase');
+  if(wkLblEl)wkLblEl.textContent=`Week ${cw}`;
+  if(wkPhaseEl)wkPhaseEl.textContent=ph0.label.split('—')[0].trim();
   const isSkipped=SNAP.hasOwnProperty(ds)&&OVERRIDES[ds]===null;
   const skippedName=isSkipped?(SESSIONS[SNAP[ds]._key]?.name||'Workout'):'';
   let out=`<div class="daybar">
