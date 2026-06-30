@@ -198,6 +198,9 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .modal-save{flex:2;background:var(--accent);border:none;border-radius:10px;color:#fff;padding:11px;font-size:14px;font-weight:700;cursor:pointer}
 .sec-hd{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px}
 .sec-hd:first-child{margin-top:0}
+.partial-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;border-radius:8px;padding:5px 11px;border:none;cursor:pointer;margin-top:6px;transition:all .2s}
+.partial-full{background:var(--gl);color:var(--green)}
+.partial-part{background:var(--ambl);color:var(--amber)}
 </style>
 </head>
 <body>
@@ -283,6 +286,139 @@ const FDB=[
 ['Crackers Rice Cake',35,1,7,0,'1 cake'],['Dark Chocolate 70%',170,2,13,12,'1 oz'],
 ['Coconut Water',46,2,9,0,'cup'],['Green Tea',2,0,0,0,'cup'],
 ['Black Coffee',5,0,1,0,'cup'],
+// Asian dishes
+['Bibimbap Bowl',560,25,80,12,'bowl'],
+['Japchae',330,8,60,7,'serving'],
+['Sundubu Jjigae (Tofu Stew)',220,18,15,9,'bowl'],
+['Dakgalbi (Spicy Chicken)',380,35,28,12,'serving'],
+['Kalbi (Korean Short Ribs)',320,28,8,18,'3 ribs'],
+['Tteokbokki',280,6,58,4,'serving'],
+['Kimbap Roll',350,12,60,6,'roll'],
+['Gyoza / Dumplings',280,14,35,10,'6 pieces'],
+['Char Siu Pork',280,22,18,12,'100g'],
+['Hainanese Chicken Rice',480,30,55,12,'plate'],
+['Pad Thai',480,20,65,16,'plate'],
+['Green Curry Chicken',350,28,18,17,'bowl'],
+['Tom Yum Soup',120,12,8,4,'bowl'],
+['Bun Bo Hue',400,28,50,8,'bowl'],
+['Banh Mi Sandwich',430,20,55,14,'sandwich'],
+['Sushi Avocado Roll',220,5,42,4,'8 pieces'],
+['Sushi Tuna Roll',180,16,26,2,'6 pieces'],
+['Salmon Nigiri',210,16,26,4,'2 pieces'],
+['Onigiri Rice Ball',180,5,36,2,'piece'],
+['Bao Bun Chicken',280,16,36,7,'bao'],
+['Fried Rice with Egg',380,12,60,10,'cup'],
+['Congee Plain',130,3,28,1,'bowl'],
+['Teriyaki Chicken',290,28,22,8,'150g'],
+['Tonkatsu',400,32,30,16,'150g'],
+['Takoyaki',210,8,28,8,'3 balls'],
+['Miso Ramen Bowl',550,22,75,18,'bowl'],
+['Soy Ramen Bowl',520,20,72,16,'bowl'],
+['Lo Mein',400,16,60,12,'cup'],
+['Chow Mein',380,14,58,10,'cup'],
+['Kung Pao Chicken',380,28,22,18,'serving'],
+['Wonton Soup',200,14,22,6,'bowl'],
+['Mapo Tofu',280,18,14,16,'serving'],
+['Dan Dan Noodles',480,22,55,18,'serving'],
+['Laksa Bowl',520,24,58,22,'bowl'],
+['Nasi Lemak',560,18,68,24,'plate'],
+['Egg Fried Rice',400,14,64,12,'cup'],
+['Spring Roll Fried',200,6,24,9,'2 rolls'],
+['Crispy Tofu',180,14,10,9,'100g'],
+// Western / International
+['Scrambled Eggs 2-egg',182,12,2,14,'serving'],
+['Omelette Plain',154,11,2,12,'2-egg'],
+['Pancake',150,4,26,4,'medium'],
+['Waffle',270,7,36,10,'medium'],
+['Toast with Butter',130,3,17,6,'slice'],
+['Bagel Plain',270,10,53,2,'bagel'],
+['Cream Cheese',100,2,2,9,'2 tbsp'],
+['Granola',200,5,36,8,'½ cup'],
+['Granola Bar',190,4,28,7,'bar'],
+['Protein Bar (Quest style)',190,21,22,8,'bar'],
+['Turkey Breast Deli Slice',25,4,0,0,'slice 30g'],
+['Ham Deli Slice',40,5,1,2,'slice 30g'],
+['Grilled Salmon Fillet',210,30,0,10,'150g'],
+['Grilled Chicken Breast',180,35,0,4,'150g'],
+['Turkey Burger Patty',200,25,2,9,'patty'],
+['Beef Burger Patty',295,26,0,20,'patty'],
+['Greek Salad',160,5,10,12,'bowl'],
+['Caesar Salad (no dressing)',200,8,14,14,'bowl'],
+['Chicken Caesar Salad',350,28,14,18,'bowl'],
+['Chicken Wrap',450,30,45,14,'wrap'],
+['Turkey Sandwich',320,22,34,10,'sandwich'],
+['BLT Sandwich',380,18,32,18,'sandwich'],
+['Egg White Omelette',100,18,2,0,'4 whites'],
+['Burrito Bowl',550,30,68,16,'bowl'],
+['Beef Steak Lean',220,32,0,9,'150g'],
+['Pork Chop Lean',200,28,0,9,'150g'],
+['Baked Potato',160,4,37,0,'medium'],
+['Smoothie Protein',320,30,36,6,'16oz'],
+// Fruits
+['Mango Cubed',135,1,35,1,'cup'],
+['Pineapple Cubed',83,1,22,0,'cup'],
+['Grapes',62,1,16,0,'cup'],
+['Peach',58,1,14,0,'medium'],
+['Pear',101,1,27,0,'medium'],
+['Kiwi',42,1,10,0,'fruit'],
+['Cantaloupe',54,1,13,0,'cup'],
+['Watermelon',46,1,12,0,'cup'],
+['Cherries',87,1,22,0,'cup'],
+// Vegetables
+['Kale Raw',33,3,6,1,'cup'],
+['Cherry Tomatoes',27,1,6,0,'cup'],
+['Bell Pepper',31,1,7,0,'medium'],
+['Carrot Sticks',52,1,12,0,'cup'],
+['Zucchini Sliced',20,1,4,0,'cup'],
+['Eggplant',20,1,5,0,'100g'],
+['Daikon Radish',18,1,4,0,'100g'],
+['Roasted Asparagus',40,4,7,0,'150g'],
+['Steamed Broccoli',55,4,11,1,'cup'],
+['Frozen Peas Cooked',118,8,21,0,'cup'],
+['Corn Kernels',132,5,29,2,'cup'],
+['Mushroom White',20,3,3,0,'100g'],
+['King Oyster Mushroom',35,3,7,0,'100g'],
+['Mixed Greens Salad',20,1,4,0,'cup'],
+// Proteins / Dairy
+['Seitan',120,25,5,1,'100g'],
+['Chickpeas Canned',145,8,24,2,'100g'],
+['Kidney Beans',128,9,23,0,'100g'],
+['String Cheese',80,7,1,5,'stick'],
+['Greek Yogurt 0%',90,17,5,0,'170g'],
+['2% Milk',122,8,12,5,'cup'],
+['Butter',100,0,0,11,'tbsp'],
+['Cheddar Cheese Slice',113,7,0,9,'slice 28g'],
+// Noodles / Grains
+['Egg Noodles Cooked',220,7,40,3,'cup'],
+['Glass Noodles Cooked',133,0,33,0,'cup'],
+['Vermicelli Rice Cooked',175,3,40,0,'cup'],
+['Barley Cooked',193,4,44,1,'cup'],
+// Sauces / Condiments
+['Oyster Sauce',18,0,4,0,'tbsp'],
+['Hoisin Sauce',35,1,7,1,'tbsp'],
+['Sriracha',5,0,1,0,'tsp'],
+['Ketchup',19,0,5,0,'tbsp'],
+['Mayonnaise',94,0,0,10,'tbsp'],
+['Honey',64,0,17,0,'tbsp'],
+['Peanut Sauce',80,3,6,5,'2 tbsp'],
+['Sambal Oelek',5,0,1,0,'tsp'],
+['Tahini',89,3,3,8,'tbsp'],
+['Guacamole',80,1,5,7,'2 tbsp'],
+['Salsa',10,0,2,0,'2 tbsp'],
+['Coconut Milk',197,2,3,21,'100ml'],
+['Soy Milk',80,7,4,4,'cup'],
+['Oat Milk',130,4,24,2,'cup'],
+// Snacks / Beverages
+['Rice Crackers',130,2,28,1,'20 pieces'],
+['Seaweed Chips',60,1,6,4,'pack'],
+['Mixed Nuts',170,5,7,15,'1 oz'],
+['Cashews',157,5,9,12,'1 oz'],
+['Pumpkin Seeds',126,5,5,11,'1 oz'],
+['Popcorn Air-Popped',106,3,21,1,'3 cups'],
+['Orange Juice',112,2,26,0,'cup'],
+['Sports Drink',80,0,21,0,'500ml'],
+['Kombucha',30,0,7,0,'8oz'],
+['Protein Shake Mixed',140,25,10,3,'shake'],
 ];
 
 /* ============================================================  WORKOUT DATA  */
@@ -423,8 +559,8 @@ const RECOVERY=[
 ];
 
 /* ============================================================  STATE  */
-let CW=1,DOF=0;
-let SETS={},DONE={},SKIPS={},PUSHES={};
+let CW=1,DOF=0,PSTART='';
+let SETS={},DONE={},PARTIAL={},OVERRIDES={},SNAP={};
 let FOOD_LOG={};    // {dateStr:[{fi,qty,name,cal,p,c,f}]}  fi=-1 for custom
 let BODY_WT={};     // {dateStr: number (lbs)}
 let BURN_LOG={};    // {dateStr: number (kcal)}
@@ -444,18 +580,20 @@ function loadState(){
     CW=parseInt(localStorage.getItem('fp_wk')||'1');
     SETS=JSON.parse(localStorage.getItem('fp_sets')||'{}');
     DONE=JSON.parse(localStorage.getItem('fp_done')||'{}');
-    SKIPS=JSON.parse(localStorage.getItem('fp_skips')||'{}');
-    PUSHES=JSON.parse(localStorage.getItem('fp_pushes')||'{}');
+    OVERRIDES=JSON.parse(localStorage.getItem('fp_overrides')||'{}');
+    SNAP=JSON.parse(localStorage.getItem('fp_snap')||'{}');
+    PSTART=localStorage.getItem('fp_start')||'';
+    PARTIAL=JSON.parse(localStorage.getItem('fp_partial')||'{}');
     FOOD_LOG=JSON.parse(localStorage.getItem('fp_food')||'{}');
     BODY_WT=JSON.parse(localStorage.getItem('fp_wt')||'{}');
     BURN_LOG=JSON.parse(localStorage.getItem('fp_burn')||'{}');
     CSTART=JSON.parse(localStorage.getItem('fp_cstart')||'{}');
     CINC=JSON.parse(localStorage.getItem('fp_cinc')||'{}');
-  }catch(e){CW=1;SETS={};DONE={};SKIPS={};PUSHES={};FOOD_LOG={};BODY_WT={};BURN_LOG={};CSTART={};CINC={}}
+  }catch(e){CW=1;SETS={};DONE={};PARTIAL={};OVERRIDES={};SNAP={};PSTART='';FOOD_LOG={};BODY_WT={};BURN_LOG={};CSTART={};CINC={}}
 }
 function saveState(){
-  const k={fp_wk:CW,fp_sets:SETS,fp_done:DONE,fp_skips:SKIPS,fp_pushes:PUSHES,
-           fp_food:FOOD_LOG,fp_wt:BODY_WT,fp_burn:BURN_LOG,fp_cstart:CSTART,fp_cinc:CINC};
+  const k={fp_wk:CW,fp_sets:SETS,fp_done:DONE,fp_partial:PARTIAL,fp_overrides:OVERRIDES,fp_snap:SNAP,
+           fp_start:PSTART,fp_food:FOOD_LOG,fp_wt:BODY_WT,fp_burn:BURN_LOG,fp_cstart:CSTART,fp_cinc:CINC};
   try{Object.entries(k).forEach(([key,val])=>localStorage.setItem(key,JSON.stringify(val)))}catch(e){}
 }
 
@@ -468,6 +606,15 @@ function saveWeight(lbs){
   if(!lbs||isNaN(lbs))return;
   BODY_WT[getDS(0)]=parseFloat(lbs);
   saveState();renderProgress();
+}
+function saveWeightDate(){
+  const lbs=parseFloat(document.getElementById('wtInput').value);
+  const ds=document.getElementById('wtDate').value;
+  if(!lbs||isNaN(lbs)||!ds)return;
+  BODY_WT[ds]=lbs;
+  saveState();
+  document.getElementById('wtInput').value='';
+  renderProgress();
 }
 function deleteWeight(ds){delete BODY_WT[ds];saveState();renderProgress()}
 
@@ -483,7 +630,7 @@ function estimateBurn(sessKey,week,fraction){
 }
 function updateBurnForToday(sess,total,done){
   const fraction=total>0?done/total:0;
-  BURN_LOG[getDS()]=estimateBurn(sess.key,CW,fraction);
+  BURN_LOG[getDS()]=estimateBurn(sess.key,viewedCW(),fraction);
   saveState();
 }
 
@@ -514,32 +661,78 @@ function effectiveWeight(sess,exIdx,week){
   return{...base,held:false,heldFrom:null,plannedW:wStr};
 }
 function isExDone(sess,exIdx){
-  const n=sess.exercises[exIdx].wks[CW-1].s;
+  const n=sess.exercises[exIdx].wks[viewedCW()-1].s;
   for(let s=0;s<n;s++)if(!SETS[skey(sess.key,exIdx,s)])return false;
   return n>0;
 }
-function updateDone(sess,exIdx){DONE[dkey(sess.key,exIdx,CW)]=isExDone(sess,exIdx)}
+function updateDone(sess,exIdx){
+  const k=dkey(sess.key,exIdx,viewedCW());
+  const allDone=isExDone(sess,exIdx);
+  DONE[k]=allDone&&!PARTIAL[k];
+}
+
+function initPStart(){
+  if(!PSTART){
+    const d=new Date();
+    const dow=d.getDay();
+    d.setDate(d.getDate()+(dow===0?-6:1-dow));
+    PSTART=localDS(d);
+    localStorage.setItem('fp_start',PSTART);
+  }
+}
+function viewedCW(){
+  if(!PSTART)return CW;
+  const start=new Date(PSTART+'T00:00:00');
+  const viewed=new Date(getDS()+'T00:00:00');
+  const vdow=viewed.getDay();
+  const vMon=new Date(viewed);vMon.setDate(viewed.getDate()+(vdow===0?-6:1-vdow));
+  const sdow=start.getDay();
+  const sMon=new Date(start);sMon.setDate(start.getDate()+(sdow===0?-6:1-sdow));
+  const wk=Math.round((vMon-sMon)/(7*86400000))+1;
+  return Math.min(6,Math.max(1,wk));
+}
 
 /* ============================================================  SKIP ENGINE  */
+function getEffSessKey(dateStr){
+  if(OVERRIDES.hasOwnProperty(dateStr))return OVERRIDES[dateStr];
+  const d=new Date(dateStr+'T00:00:00');
+  return SCHED[d.getDay()]?.key||null;
+}
+function getEffSess(dateStr){const k=getEffSessKey(dateStr);return k?SESSIONS[k]||null:null;}
+
 function skipWorkout(){
-  const ds=getDS(),next=getDS(DOF+1),sess=SCHED[curDow()];
-  if(!sess?.key||sess.type==='rest'||sess.type==='opt')return;
-  if(SKIPS[ds]===sess.key){
-    delete SKIPS[ds];
-    if(PUSHES[next]){PUSHES[next]=PUSHES[next].filter(k=>k!==sess.key);if(!PUSHES[next].length)delete PUSHES[next]}
-  }else{
-    SKIPS[ds]=sess.key;
-    if(!PUSHES[next])PUSHES[next]=[];
-    if(!PUSHES[next].includes(sess.key))PUSHES[next].push(sess.key);
-  }
+  const ds=getDS();
+  const d=new Date(ds+'T00:00:00'),dow=d.getDay();
+  if(dow===0)return;
+  const currKey=getEffSessKey(ds);
+  if(!currKey)return;
+  const sess=SESSIONS[currKey];
+  if(!sess||sess.type==='rest')return;
+
+  const daysToSat=6-dow;
+  const futureDates=[];
+  for(let i=1;i<=daysToSat;i++){const nd=new Date(ds+'T00:00:00');nd.setDate(nd.getDate()+i);futureDates.push(localDS(nd));}
+
+  // snapshot for undo
+  SNAP[ds]={_key:currKey};
+  for(const fd of[ds,...futureDates])SNAP[ds][fd]=OVERRIDES.hasOwnProperty(fd)?OVERRIDES[fd]:undefined;
+
+  // shift: current session moves to tomorrow, rest cascade forward, last falls off Saturday
+  const futureKeys=futureDates.map(fd=>getEffSessKey(fd));
+  OVERRIDES[ds]=null;
+  const shifted=[currKey,...futureKeys];
+  for(let i=0;i<futureDates.length;i++)OVERRIDES[futureDates[i]]=shifted[i];
+
   saveState();renderToday();renderSchedule();
 }
-function undoSkip(ds,sk){
-  if(SKIPS[ds]!==sk)return;
-  delete SKIPS[ds];
-  const d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+1);
-  const nx=d.toISOString().slice(0,10);
-  if(PUSHES[nx]){PUSHES[nx]=PUSHES[nx].filter(k=>k!==sk);if(!PUSHES[nx].length)delete PUSHES[nx]}
+
+function undoSkip(ds){
+  const snap=SNAP[ds];if(!snap)return;
+  for(const[fd,val]of Object.entries(snap)){
+    if(fd==='_key')continue;
+    if(val===undefined)delete OVERRIDES[fd];else OVERRIDES[fd]=val;
+  }
+  delete SNAP[ds];
   saveState();renderToday();renderSchedule();
 }
 
@@ -673,7 +866,14 @@ function saveModal(){
 }
 
 /* ============================================================  ACTIONS  */
-function chWk(d){CW=Math.max(1,Math.min(6,CW+d));saveState();renderAll()}
+function chWk(d){
+  if(!PSTART)initPStart();
+  const p=new Date(PSTART+'T00:00:00');
+  p.setDate(p.getDate()-7*d);
+  PSTART=localDS(p);
+  localStorage.setItem('fp_start',PSTART);
+  saveState();renderAll();
+}
 function chDay(d){DOF+=d;renderToday()}
 function goTab(tab,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
@@ -693,9 +893,16 @@ function toggleSet(sessKey,exIdx,setIdx){
     updateDone(sess,exIdx);
     // recompute burn
     let total=0,done=0;
-    sess.exercises.forEach((ex,ei)=>{const ew=effectiveWeight(sess,ei,CW);total+=ew.s;for(let s=0;s<ew.s;s++)if(SETS[skey(sess.key,ei,s)])done++;});
+    sess.exercises.forEach((ex,ei)=>{const ew=effectiveWeight(sess,ei,viewedCW());total+=ew.s;for(let s=0;s<ew.s;s++)if(SETS[skey(sess.key,ei,s)])done++;});
     updateBurnForToday(sess,total,done);
   }
+  saveState();renderToday();
+}
+function togglePartial(sessKey,exIdx){
+  const k=dkey(sessKey,exIdx,viewedCW());
+  if(PARTIAL[k])delete PARTIAL[k];else PARTIAL[k]=true;
+  const sess=SESSIONS[sessKey];
+  if(sess)updateDone(sess,exIdx);
   saveState();renderToday();
 }
 function toggleColl(el){el.parentElement.classList.toggle('op')}
@@ -714,21 +921,25 @@ function coll(title,ico,body,open=false){
 
 /* ============================================================  TODAY TAB  */
 function renderToday(){
-  const dow=curDow(),isToday=DOF===0,ds=getDS(),sess=SCHED[dow];
+  const dow=curDow(),isToday=DOF===0,ds=getDS();
+  const sess=getEffSess(ds)||SCHED[dow];
+  const cw=viewedCW();
+  const isSkipped=SNAP.hasOwnProperty(ds)&&OVERRIDES[ds]===null;
+  const skippedName=isSkipped?(SESSIONS[SNAP[ds]._key]?.name||'Workout'):'';
   let out=`<div class="daybar">
     <button class="daybtn" onclick="chDay(-1)">‹</button>
     <div class="dayinfo">
       <div><div class="day-name">${isToday?'📍 Today — ':''}${DNAMES[dow]}</div>
-      <div class="day-sub">${SKIPS[ds]&&SKIPS[ds]===sess.key?'⏭ Skipped — pushed to tomorrow':sess.name}</div></div>
-      ${sess.type==='upper'||sess.type==='lower'?`<div class="pbadge">Ph${phaseNum(CW)}</div>`:''}
+      <div class="day-sub">${isSkipped?'⏭ Skipped — week shifted':sess.name}</div></div>
+      ${sess.type==='upper'||sess.type==='lower'?`<div class="pbadge">Ph${phaseNum(cw)}</div>`:''}
     </div>
     <button class="daybtn" onclick="chDay(1)">›</button>
   </div>`;
 
-  if(SKIPS[ds]&&SKIPS[ds]===sess.key){
-    out+=`<div class="skipped-card"><div class="skipped-emo">⏭</div><div class="skipped-ttl">Workout Skipped</div>
-      <div class="skipped-sub">${sess.name} pushed to tomorrow.</div>
-      <button class="undo-btn" onclick="undoSkip('${ds}','${sess.key}')">↩ Undo Skip</button></div>`;
+  if(isSkipped){
+    out+=`<div class="skipped-card"><div class="skipped-emo">⏭</div><div class="skipped-ttl">Session Skipped</div>
+      <div class="skipped-sub">${skippedName} moved to tomorrow.<br>Remaining sessions shifted forward.</div>
+      <button class="undo-btn" onclick="undoSkip('${ds}')">↩ Undo</button></div>`;
   }else if(sess.type==='rest'){
     out+=`<div class="rest-card"><div class="rest-emo">😴</div><div class="rest-ttl">Rest Day</div><div class="rest-sub">Recovery is where progress happens.<br>Sleep 7–9 h · Hydrate · Reduce carbs 20–30 g</div></div>`;
   }else if(sess.type==='opt'){
@@ -739,39 +950,31 @@ function renderToday(){
     out+=renderWorkoutDay(sess);
   }
 
-  // makeup workouts
-  (PUSHES[ds]||[]).forEach(sk=>{
-    const mk=SESSIONS[sk];if(!mk)return;
-    const prevD=new Date(ds+'T00:00:00');prevD.setDate(prevD.getDate()-1);
-    out+=`<div class="makeup-hdr"><div class="makeup-pill">📌 Makeup</div><div class="makeup-from">From ${DNAMES[prevD.getDay()]}</div><div class="makeup-div"></div></div>`;
-    if(mk.type==='cardio')out+=renderCardioDay(mk,true);
-    else if(mk.exercises)out+=renderWorkoutDay(mk,true);
-  });
-
   document.getElementById('tab-today').innerHTML=out;
 }
 
 function renderCardioDay(sess,isMakeup=false){
-  const i=CW<=2?0:CW<=4?1:2;
+  const cw=viewedCW();
+  const i=cw<=2?0:cw<=4?1:2;
   const cp=CARDIO_PROTO[i];
-  const burn=estimateBurn('cardio',CW,1);
-  const ds=getDS(),sk=!isMakeup&&SKIPS[ds]===sess.key;
+  const burn=estimateBurn('cardio',cw,1);
+  const ds=getDS(),sk=false;
   return`<div class="sess-hdr"><div class="sess-ico">🏃</div><div class="sess-det">
     <div class="sess-name">Cardio — Treadmill${isMakeup?' <span style="font-size:10px;color:var(--accent)">(Makeup)</span>':''}</div>
     <div class="sess-meta"><span class="meta-chip">📍 ${cp.type}</span><span class="meta-chip">⏱ ~45 min</span><span class="burn-chip">🔥 ~${burn} kcal</span></div>
-    ${!isMakeup?`<button class="skip-btn" onclick="skipWorkout()">${sk?'↩ Undo Skip':'⏭ Skip to Tomorrow'}</button>`:''}
+    ${!isMakeup?`<button class="skip-btn" onclick="skipWorkout()">⏭ Skip &amp; Shift Week</button>`:''}
   </div></div>
   ${coll(`${cp.wk} — ${cp.type}`,'🔥',`<p style="font-size:13px;color:var(--text2);line-height:1.7">${cp.text}</p>
     <p style="margin-top:8px;font-size:12px;color:${i>0?'var(--accent)':'var(--accent2)'};font-weight:700">${i>0?'⚡ HIIT — push hard on sprints':'💚 LISS — conversational pace'}</p>`,true)}`;
 }
 
 function renderWorkoutDay(sess,isMakeup=false){
-  const wi=CW-1,ph=phase(CW),ds=getDS();
-  const sk=!isMakeup&&SKIPS[ds]===sess.key;
+  const cw=viewedCW(),wi=cw-1,ph=phase(cw),ds=getDS();
+  const sk=false;
   let total=0,done=0;
-  sess.exercises.forEach((ex,ei)=>{const ew=effectiveWeight(sess,ei,CW);total+=ew.s;for(let s=0;s<ew.s;s++)if(SETS[skey(sess.key,ei,s)])done++;});
+  sess.exercises.forEach((ex,ei)=>{const ew=effectiveWeight(sess,ei,cw);total+=ew.s;for(let s=0;s<ew.s;s++)if(SETS[skey(sess.key,ei,s)])done++;});
   const pct=total>0?Math.round(done/total*100):0;
-  const burn=estimateBurn(sess.key,CW,total>0?done/total:0);
+  const burn=estimateBurn(sess.key,cw,total>0?done/total:0);
 
   let out=`<div class="sess-hdr"><div class="sess-ico">${sess.emoji}</div><div class="sess-det">
     <div class="sess-name">${sess.name}${isMakeup?' <span style="font-size:10px;color:var(--accent)">(Makeup)</span>':''}</div>
@@ -784,7 +987,7 @@ function renderWorkoutDay(sess,isMakeup=false){
       <div class="pbar-wrap"><div class="pbar-fill" style="width:${pct}%"></div></div>
       <div class="pbar-lbl">${done}/${total}${pct===100?' 🎉':''}</div>
     </div>
-    ${!isMakeup?`<button class="skip-btn" onclick="skipWorkout()">${sk?'↩ Undo Skip':'⏭ Skip to Tomorrow'}</button>`:''}
+    ${!isMakeup?`<button class="skip-btn" onclick="skipWorkout()">⏭ Skip &amp; Shift Week</button>`:''}
   </div></div>`;
 
   out+=coll('Warm-Up Protocol','🌡️',WARMUP.map(s=>`<div class="pstep"><div class="snum">${s.n}</div><div>${s.t}</div></div>`).join(''));
@@ -795,17 +998,17 @@ function renderWorkoutDay(sess,isMakeup=false){
   out+=`<div class="sec-hd">Exercises</div>`;
 
   sess.exercises.forEach((ex,ei)=>{
-    const ew=effectiveWeight(sess,ei,CW);
+    const ew=effectiveWeight(sess,ei,cw);
     const exDone=isExDone(sess,ei);
-    const doneFlag=DONE[dkey(sess.key,ei,CW)];
+    const doneFlag=DONE[dkey(sess.key,ei,cw)];
     let nextW=null;
-    if(CW<6){const nd=DONE[dkey(sess.key,ei,CW)];if(nd===true)nextW=effectiveWeight(sess,ei,CW+1).w;else if(nd===false)nextW=ew.w;}
+    if(cw<6){const nd=DONE[dkey(sess.key,ei,cw)];if(nd===true)nextW=effectiveWeight(sess,ei,cw+1).w;else if(nd===false)nextW=ew.w;}
     let dots='';
     for(let s=0;s<ew.s;s++){const k=skey(sess.key,ei,s);const dn=SETS[k];dots+=`<div class="sdot${dn?' done':''}" onclick="toggleSet('${sess.key}',${ei},${s})">${dn?'✓':s+1}</div>`;}
     let olInd='';
-    if(exDone&&CW<6&&nextW)olInd=`<div class="ol-ind ol-unlock">🔓 Progress unlocked<span class="ol-target">Next: ${nextW}</span></div>`;
-    else if(exDone&&CW===6)olInd=`<div class="ol-ind ol-unlock">🏆 Week 6 — personal best!</div>`;
-    else if(doneFlag===false&&CW>1)olInd=`<div class="ol-ind ol-held">⏸ Held${ew.plannedW!==ew.w?` — plan was ${ew.plannedW}`:''}</div>`;
+    if(exDone&&cw<6&&nextW)olInd=`<div class="ol-ind ol-unlock">🔓 Progress unlocked<span class="ol-target">Next: ${nextW}</span></div>`;
+    else if(exDone&&cw===6)olInd=`<div class="ol-ind ol-unlock">🏆 Week 6 — personal best!</div>`;
+    else if(doneFlag===false&&cw>1)olInd=`<div class="ol-ind ol-held">⏸ Held${ew.plannedW!==ew.w?` — plan was ${ew.plannedW}`:''}</div>`;
 
     out+=`<div class="ex-card${ew.held?' ex-held':(exDone?' ex-done':'')}">
       <div class="ex-main">
@@ -817,6 +1020,7 @@ function renderWorkoutDay(sess,isMakeup=false){
           <div class="ex-badge${ew.held?' held':''}">${ew.s}×${ew.r}<small>${ew.w}</small></div>
         </div>
         <div class="set-row">${dots}</div>
+        ${exDone?`<button class="partial-btn ${PARTIAL[dkey(sess.key,ei,cw)]?'partial-part':'partial-full'}" onclick="togglePartial('${sess.key}',${ei})">${PARTIAL[dkey(sess.key,ei,cw)]?'⚠ Partial Reps — weight held':'🎯 Full Reps ✓'}</button>`:''}
         ${olInd}
       </div>
       <div class="cue-row" onclick="toggleCue(this)"><span class="cue-ico">💡</span><span class="cue-txt">${ex.cue}</span></div>
@@ -830,12 +1034,15 @@ function renderSchedule(){
   const today=todayDow();
   let out=`<div class="sec-hd">Weekly Schedule</div>`;
   DNAMES.forEach((name,i)=>{
-    const s=SCHED[i],isT=i===today;
     const off=i-today;
     const thisDS=getDS(off);
+    const effKey=getEffSessKey(thisDS);
+    const defKey=SCHED[i]?.key||null;
+    const s=(effKey?SESSIONS[effKey]:null)||SCHED[i];
+    const isT=i===today;
     let tags='';
-    if(SKIPS[thisDS])tags+=`<span class="stag stag-skip">Skipped</span>`;
-    if((PUSHES[thisDS]||[]).length)tags+=`<span class="stag stag-push">+Makeup</span>`;
+    if(SNAP.hasOwnProperty(thisDS)&&OVERRIDES[thisDS]===null)tags+=`<span class="stag stag-skip">Skipped</span>`;
+    else if(effKey&&effKey!==defKey)tags+=`<span class="stag stag-push">Shifted</span>`;
     out+=`<div class="sched-row${isT?' today':''}" onclick="viewDay(${i})">
       <div class="sched-day">${name.slice(0,3)}</div>
       <div><div class="sched-sname">${s.emoji} ${s.name}${tags}</div><div class="sched-ssub">${sessSubtitle(s)}</div></div>
@@ -1005,8 +1212,9 @@ function renderProgress(){
 
   let out=`<div class="sec-hd">Body Weight</div>
   <div class="wt-input-row">
+    <input type="date" id="wtDate" value="${getDS(0)}" class="wt-inp" style="flex:0.8;font-size:13px;padding:10px 8px">
     <input class="wt-inp" id="wtInput" type="number" step="0.1" placeholder="${latestWt} lbs" value="">
-    <button class="save-wt-btn" onclick="saveWeight(document.getElementById('wtInput').value);document.getElementById('wtInput').value=''">Log</button>
+    <button class="save-wt-btn" onclick="saveWeightDate()">Log</button>
   </div>
 
   <div class="stat-grid">
@@ -1096,19 +1304,24 @@ function renderRef(){
   </div>
   <div id="ref-glossary" class="ref-sec">
     <div class="sec-hd">Exercise Glossary</div>
-    ${coll('All Exercises','📚',GLOSSARY.map(g=>`<div class="gloss-item"><div class="gloss-name">${g.name}</div><div class="gloss-muscle">${g.muscle}</div><div class="gloss-cue">${g.cue}</div></div>`).join(''),true)}
+    ${coll('All Exercises','📚',GLOSSARY.map(g=>`<div class="gloss-item">
+  <div class="gloss-name">${g.name} <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(g.name+' exercise form tutorial')}" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);text-decoration:none;font-weight:600;margin-left:6px;white-space:nowrap">▶ Demo</a></div>
+  <div class="gloss-muscle">${g.muscle}</div>
+  <div class="gloss-cue">${g.cue}</div>
+</div>`).join(''),true)}
   </div>`;
   document.getElementById('tab-ref').innerHTML=out;
 }
 
 /* ============================================================  INIT  */
 function renderAll(){
-  const ph=phase(CW);
-  document.getElementById('wkLbl').textContent=`Week ${CW}`;
+  const cw=viewedCW();
+  const ph=phase(cw);
+  document.getElementById('wkLbl').textContent=`Week ${cw}`;
   document.getElementById('wkPhase').textContent=ph.label.split('—')[0].trim();
   renderToday();renderSchedule();renderLog();renderProgress();renderRef();
 }
-loadState();renderAll();
+loadState();initPStart();renderAll();
 </script>
 </body>
 </html>
