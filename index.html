@@ -733,6 +733,7 @@ const RECOVERY=[
 let CW=1,DOF=0,PSTART='';
 let SETS={},DONE={},PARTIAL={},OVERRIDES={},SNAP={};
 let FOOD_LOG={};    // {dateStr:[{fi,qty,name,cal,p,c,f}]}  fi=-1 for custom
+let CUSTOM_FOODS=[]; // user-added foods, same shape as FDB rows: [name,kcal,p,c,fat,fiber,unit]
 let BODY_WT={};     // {dateStr: number (lbs)}
 let BURN_LOG={};    // {dateStr: number (kcal)}
 let CSTART={};      // {sessKey_exIdx: number} custom start weight
@@ -756,15 +757,16 @@ function loadState(){
     PSTART=localStorage.getItem('fp_start')||'';
     PARTIAL=JSON.parse(localStorage.getItem('fp_partial')||'{}');
     FOOD_LOG=JSON.parse(localStorage.getItem('fp_food')||'{}');
+    CUSTOM_FOODS=JSON.parse(localStorage.getItem('fp_customfoods')||'[]');
     BODY_WT=JSON.parse(localStorage.getItem('fp_wt')||'{}');
     BURN_LOG=JSON.parse(localStorage.getItem('fp_burn')||'{}');
     CSTART=JSON.parse(localStorage.getItem('fp_cstart')||'{}');
     CINC=JSON.parse(localStorage.getItem('fp_cinc')||'{}');
-  }catch(e){CW=1;SETS={};DONE={};PARTIAL={};OVERRIDES={};SNAP={};PSTART='';FOOD_LOG={};BODY_WT={};BURN_LOG={};CSTART={};CINC={}}
+  }catch(e){CW=1;SETS={};DONE={};PARTIAL={};OVERRIDES={};SNAP={};PSTART='';FOOD_LOG={};CUSTOM_FOODS=[];BODY_WT={};BURN_LOG={};CSTART={};CINC={}}
 }
 function saveState(){
   const k={fp_wk:CW,fp_sets:SETS,fp_done:DONE,fp_partial:PARTIAL,fp_overrides:OVERRIDES,fp_snap:SNAP,
-           fp_start:PSTART,fp_food:FOOD_LOG,fp_wt:BODY_WT,fp_burn:BURN_LOG,fp_cstart:CSTART,fp_cinc:CINC};
+           fp_start:PSTART,fp_food:FOOD_LOG,fp_customfoods:CUSTOM_FOODS,fp_wt:BODY_WT,fp_burn:BURN_LOG,fp_cstart:CSTART,fp_cinc:CINC};
   try{Object.entries(k).forEach(([key,val])=>localStorage.setItem(key,JSON.stringify(val)))}catch(e){}
 }
 
@@ -910,23 +912,31 @@ function undoSkip(ds){
 /* ============================================================  FOOD LOG ENGINE  */
 let _pendingFood=null,_logDOF=0;
 function logDS(){const d=new Date();d.setDate(d.getDate()+_logDOF);return d.toISOString().slice(0,10)}
+function allFoods(){return FDB.concat(CUSTOM_FOODS)}
 function foodSearch(q){
   if(!q)return[];
   const ql=q.toLowerCase();
-  return FDB.filter(f=>f[0].toLowerCase().includes(ql)).slice(0,8);
+  return allFoods().filter(f=>f[0].toLowerCase().includes(ql)).slice(0,8);
 }
 function addFoodEntry(fi,qty){
-  const f=FDB[fi],q=parseFloat(qty)||1;
+  const f=allFoods()[fi],q=parseFloat(qty)||1;
   const ds=logDS();
   if(!FOOD_LOG[ds])FOOD_LOG[ds]=[];
   FOOD_LOG[ds].push({fi,qty:q,name:f[0],cal:Math.round(f[1]*q),p:Math.round(f[2]*q*10)/10,c:Math.round(f[3]*q*10)/10,fat:Math.round(f[4]*q*10)/10,fiber:Math.round((f[5]||0)*q*10)/10,unit:f[6]});
   saveState();renderLog();
 }
-function addCustomFood(name,cal,p,c,fat,fiber){
+function addCustomFood(name,cal,p,c,fat,fiber,unit){
   if(!name||!cal)return;
+  const nm=name.trim();if(!nm)return;
+  const c1=parseInt(cal),p1=parseFloat(p)||0,c2=parseFloat(c)||0,f1=parseFloat(fat)||0,fib1=parseFloat(fiber)||0;
+  const u=(unit&&unit.trim())||'serving';
   const ds=logDS();
   if(!FOOD_LOG[ds])FOOD_LOG[ds]=[];
-  FOOD_LOG[ds].push({fi:-1,qty:1,name,cal:parseInt(cal),p:parseFloat(p)||0,c:parseFloat(c)||0,fat:parseFloat(fat)||0,fiber:parseFloat(fiber)||0,unit:'custom'});
+  // remember in the food library for future search/reuse, unless already present
+  const exists=allFoods().some(f=>f[0].toLowerCase()===nm.toLowerCase());
+  if(!exists)CUSTOM_FOODS.push([nm,c1,p1,c2,f1,fib1,u]);
+  const fi=allFoods().findIndex(f=>f[0].toLowerCase()===nm.toLowerCase());
+  FOOD_LOG[ds].push({fi,qty:1,name:nm,cal:c1,p:p1,c:c2,fat:f1,fiber:fib1,unit:u});
   saveState();renderLog();
 }
 function removeFoodEntry(ds,idx){
@@ -1301,9 +1311,10 @@ function renderLog(){
     <button class="add-btn" onclick="confirmAddFood()">Add</button>
   </div>
 
-  <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Or add custom:</div>
+  <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Or add custom — it's saved to your food library for next time:</div>
   <div class="custom-row">
     <input class="custom-inp" id="cName" placeholder="Name" style="flex:2">
+    <input class="custom-inp" id="cUnit" placeholder="Unit (e.g. 100g)" style="flex:1.2">
     <input class="custom-inp" id="cCal" placeholder="kcal" type="number" style="width:60px;flex:none">
     <input class="custom-inp" id="cProt" placeholder="P(g)" type="number" style="width:52px;flex:none">
     <input class="custom-inp" id="cCarb" placeholder="C(g)" type="number" style="width:52px;flex:none">
@@ -1337,9 +1348,10 @@ function onFoodSearch(q){
   const res=foodSearch(q);
   if(!res.length){drop.style.display='none';return;}
   drop.innerHTML=res.map((f,i)=>{
-    const fi=FDB.indexOf(f);
+    const fi=allFoods().indexOf(f);
+    const isCustom=fi>=FDB.length;
     return`<div class="search-item" onclick="selectFood(${fi})">
-      <div><div class="si-name">${f[0]}</div><div class="si-meta">${f[6]}</div></div>
+      <div><div class="si-name">${f[0]}${isCustom?' <span style="font-size:9px;color:var(--accent2);font-weight:700">MY FOOD</span>':''}</div><div class="si-meta">${f[6]}</div></div>
       <div class="si-cal">${f[1]} kcal</div>
     </div>`;
   }).join('');
@@ -1347,7 +1359,7 @@ function onFoodSearch(q){
 }
 function selectFood(fi){
   _pendingFood=fi;
-  const f=FDB[fi];
+  const f=allFoods()[fi];
   document.getElementById('searchDrop').style.display='none';
   document.getElementById('foodSearch').value='';
   document.getElementById('qtyName').textContent=f[0];
@@ -1359,7 +1371,7 @@ function selectFood(fi){
 function updateQtyCal(){
   if(_pendingFood===null)return;
   const q=parseFloat(document.getElementById('qtyAmt').value)||1;
-  document.getElementById('qtyCal').textContent=`${Math.round(FDB[_pendingFood][1]*q)} kcal`;
+  document.getElementById('qtyCal').textContent=`${Math.round(allFoods()[_pendingFood][1]*q)} kcal`;
 }
 function confirmAddFood(){
   if(_pendingFood===null)return;
@@ -1370,13 +1382,14 @@ function confirmAddFood(){
 }
 function confirmCustomFood(){
   const n=document.getElementById('cName').value;
+  const unit=document.getElementById('cUnit').value;
   const cal=document.getElementById('cCal').value;
   const p=document.getElementById('cProt').value||0;
   const c=document.getElementById('cCarb').value||0;
   const fat=document.getElementById('cFat').value||0;
   const fiber=document.getElementById('cFiber').value||0;
-  addCustomFood(n,cal,p,c,fat,fiber);
-  ['cName','cCal','cProt','cCarb','cFat','cFiber'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  addCustomFood(n,cal,p,c,fat,fiber,unit);
+  ['cName','cUnit','cCal','cProt','cCarb','cFat','cFiber'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
 }
 
 /* ============================================================  PROGRESS TAB  */
