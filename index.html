@@ -1161,15 +1161,32 @@ function saveModal(){
 }
 
 /* ============================================================  ACTIONS  */
+function progBounds(){
+  if(!PSTART)initPStart();
+  const w1=new Date(PSTART+'T00:00:00');
+  const w6=new Date(w1);w6.setDate(w1.getDate()+41);
+  return{w1,w6};
+}
 function chWk(d){
   if(!PSTART)initPStart();
-  const p=new Date(PSTART+'T00:00:00');
-  p.setDate(p.getDate()-7*d);
-  PSTART=localDS(p);
-  localStorage.setItem('fp_start',PSTART);
-  saveState();renderAll();
+  const{w1,w6}=progBounds();
+  const today=new Date();
+  const nd=DOF+7*d;
+  const ndt=new Date(today);ndt.setDate(today.getDate()+nd);
+  if(ndt<w1)DOF=Math.round((w1-today)/86400000);
+  else if(ndt>w6)DOF=Math.round((w6-today)/86400000);
+  else DOF=nd;
+  renderAll();
 }
-function chDay(d){DOF+=d;renderToday()}
+function chDay(d){
+  if(!PSTART)initPStart();
+  const{w1,w6}=progBounds();
+  const today=new Date();
+  const nd=DOF+d;
+  const ndt=new Date(today);ndt.setDate(today.getDate()+nd);
+  if(ndt>=w1&&ndt<=w6)DOF=nd;
+  renderToday();
+}
 function goTab(tab,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
@@ -1177,8 +1194,10 @@ function goTab(tab,btn){
   if(btn)btn.classList.add('on');
   window.scrollTo(0,0);
   if(tab==='today')renderToday();
+  if(tab==='schedule')renderSchedule();
   if(tab==='log')setTimeout(()=>renderLog(),10);
   if(tab==='progress')setTimeout(()=>renderProgress(),10);
+  if(tab==='ref')renderRef();
 }
 function toggleSet(sessKey,exIdx,setIdx){
   const k=skey(sessKey,exIdx,setIdx);
