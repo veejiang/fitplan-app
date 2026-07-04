@@ -865,7 +865,7 @@ function loadState(){
     DONE=JSON.parse(localStorage.getItem('fp_done')||'{}');
     OVERRIDES=JSON.parse(localStorage.getItem('fp_overrides')||'{}');
     SNAP=JSON.parse(localStorage.getItem('fp_snap')||'{}');
-    PSTART=localStorage.getItem('fp_start')||'';
+    const _rps=localStorage.getItem('fp_start')||'""';PSTART=(_rps.startsWith('"')?JSON.parse(_rps):_rps)||'';
     PARTIAL=JSON.parse(localStorage.getItem('fp_partial')||'{}');
     FOOD_LOG=JSON.parse(localStorage.getItem('fp_food')||'{}');
     CUSTOM_FOODS=JSON.parse(localStorage.getItem('fp_customfoods')||'[]');
@@ -1190,6 +1190,13 @@ function toggleSet(sessKey,exIdx,setIdx){
   }
   saveState();renderToday();
 }
+function resetWorkoutData(){
+  if(!confirm('Clear all workout tracking data (sets, weights, progress)? Food log and body weight will be kept.'))return;
+  SETS={};DONE={};PARTIAL={};OVERRIDES={};SNAP={};BURN_LOG={};CSTART={};CINC={};DOF=0;
+  ['fp_sets','fp_done','fp_partial','fp_overrides','fp_snap','fp_burn','fp_cstart','fp_cinc'].forEach(k=>localStorage.removeItem(k));
+  saveState();renderAll();
+}
+
 function togglePartial(sessKey,exIdx){
   const k=dkey(sessKey,exIdx,viewedCW());
   if(PARTIAL[k])delete PARTIAL[k];else PARTIAL[k]=true;
@@ -1614,6 +1621,12 @@ function renderRef(){
   <div class="gloss-muscle">${g.muscle}</div>
   <div class="gloss-cue">${g.cue}</div>
 </div>`).join(''),true)}
+    <div class="sec-hd" style="margin-top:20px">Settings</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Reset Workout Data</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Clears all set tracking, weights, and burn estimates. Food log and body weight are kept.</div>
+      <button onclick="resetWorkoutData()" style="background:#ff4d4d;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">🗑 Reset Workout Data</button>
+    </div>
   </div>`;
   document.getElementById('tab-ref').innerHTML=out;
 }
