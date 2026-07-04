@@ -865,7 +865,9 @@ function loadState(){
     DONE=JSON.parse(localStorage.getItem('fp_done')||'{}');
     OVERRIDES=JSON.parse(localStorage.getItem('fp_overrides')||'{}');
     SNAP=JSON.parse(localStorage.getItem('fp_snap')||'{}');
-    const _rps=localStorage.getItem('fp_start')||'""';PSTART=(_rps.startsWith('"')?JSON.parse(_rps):_rps)||'';
+    const _rps=localStorage.getItem('fp_start')||'';
+    try{PSTART=_rps.startsWith('"')?JSON.parse(_rps):_rps;}catch(e){PSTART='';}
+    if(PSTART&&isNaN(new Date(PSTART+'T00:00:00').getTime()))PSTART='';
     PARTIAL=JSON.parse(localStorage.getItem('fp_partial')||'{}');
     FOOD_LOG=JSON.parse(localStorage.getItem('fp_food')||'{}');
     CUSTOM_FOODS=JSON.parse(localStorage.getItem('fp_customfoods')||'[]');
@@ -877,8 +879,8 @@ function loadState(){
 }
 function saveState(){
   const k={fp_wk:CW,fp_sets:SETS,fp_done:DONE,fp_partial:PARTIAL,fp_overrides:OVERRIDES,fp_snap:SNAP,
-           fp_start:PSTART,fp_food:FOOD_LOG,fp_customfoods:CUSTOM_FOODS,fp_wt:BODY_WT,fp_burn:BURN_LOG,fp_cstart:CSTART,fp_cinc:CINC};
-  try{Object.entries(k).forEach(([key,val])=>localStorage.setItem(key,JSON.stringify(val)))}catch(e){}
+           fp_food:FOOD_LOG,fp_customfoods:CUSTOM_FOODS,fp_wt:BODY_WT,fp_burn:BURN_LOG,fp_cstart:CSTART,fp_cinc:CINC};
+  try{Object.entries(k).forEach(([key,val])=>localStorage.setItem(key,JSON.stringify(val)));localStorage.setItem('fp_start',PSTART||'');}catch(e){}
 }
 
 /* ============================================================  BODY WEIGHT  */
@@ -973,6 +975,7 @@ function viewedCW(){
   const sdow=start.getDay();
   const sMon=new Date(start);sMon.setDate(start.getDate()+(sdow===0?-6:1-sdow));
   const wk=Math.round((vMon-sMon)/(7*86400000))+1;
+  if(isNaN(wk)){PSTART='';initPStart();return 1;}
   return Math.min(6,Math.max(1,wk));
 }
 
