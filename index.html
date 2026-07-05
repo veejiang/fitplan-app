@@ -1264,6 +1264,7 @@ function toggleSet(sessKey,exIdx,setIdx){
   const k=skey(sessKey,exIdx,setIdx);
   SETS[k]=!SETS[k];
   const sess=SESSIONS[sessKey];
+  if(SETS[k]&&REPS[k]===undefined&&sess){REPS[k]=computeEffectiveState(sess,exIdx).targetReps;}
   if(sess){
     updateDone(sess,exIdx);
     let total=0,done=0;
@@ -1408,7 +1409,7 @@ function renderWorkoutDay(sess,isMakeup=false){
     for(let s=0;s<es.numSets;s++){
       const sk=skey(sess.key,ei,s);
       const isDone=!!SETS[sk];
-      const repsVal=REPS[sk]!==undefined?REPS[sk]:'';
+      const repsVal=REPS[sk]!==undefined?REPS[sk]:es.targetReps;
       const rirVal=RIR_LOG[sk]!==undefined?RIR_LOG[sk]:'';
       setRows+=`<div class="set-track-row">
         <span class="str-lbl">S${s+1}</span>
