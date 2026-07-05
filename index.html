@@ -198,9 +198,26 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .modal-save{flex:2;background:var(--accent);border:none;border-radius:10px;color:#fff;padding:11px;font-size:14px;font-weight:700;cursor:pointer}
 .sec-hd{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px}
 .sec-hd:first-child{margin-top:0}
-.partial-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;border-radius:8px;padding:5px 11px;border:none;cursor:pointer;margin-top:6px;transition:all .2s}
-.partial-full{background:var(--gl);color:var(--green)}
-.partial-part{background:var(--ambl);color:var(--amber)}
+.partial-btn{display:none}
+.set-hdr{display:grid;grid-template-columns:26px 1fr 62px 28px;gap:7px;padding:0 0 5px;border-bottom:1px solid var(--border);margin-bottom:2px}
+.set-hdr span{font-size:10px;color:var(--text2);font-weight:600}
+.set-track-row{display:grid;grid-template-columns:26px 1fr 62px 28px;gap:7px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.set-track-row:last-of-type{border-bottom:none}
+.str-lbl{font-size:12px;color:var(--text2);font-weight:600;text-align:center}
+.str-inp{width:100%;font-size:14px;font-weight:700;padding:5px 6px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);text-align:center;outline:none}
+.str-inp:focus{border-color:var(--accent)}
+.str-inp.done{border-color:var(--green);color:var(--green)}
+.str-sel{width:100%;font-size:11px;padding:5px 2px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text2);outline:none}
+.str-sel.picked{color:var(--text)}
+.sdot2{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;color:var(--text2);flex-shrink:0}
+.sdot2.done{background:var(--green);border-color:var(--green);color:#0a120e}
+.wt-ovr-row{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:8px;padding:7px 10px;margin-bottom:8px;border:1px solid var(--border)}
+.wt-ovr-lbl{font-size:12px;color:var(--text2);flex:1}
+.wt-ovr-inp{width:72px;font-size:14px;font-weight:700;padding:5px 8px;border-radius:7px;border:1px solid var(--accent);background:var(--card);color:var(--text);text-align:center;outline:none}
+.ol-status{margin-top:8px;padding:8px 11px;border-radius:8px;font-size:12px;display:flex;align-items:center;gap:7px;line-height:1.4}
+.ol-up{background:var(--gl);color:var(--green);border:1px solid var(--gb)}
+.ol-add{background:var(--ambl);color:var(--amber);border:1px solid var(--ambb)}
+.ol-hold{background:var(--bg);color:var(--text2);border:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -232,8 +249,9 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
     <div class="modal-ttl" id="editTitle">Edit Exercise</div>
     <div class="modal-sub" id="editSub"></div>
     <div class="modal-row"><span class="modal-lbl">Starting weight</span><input class="modal-inp" id="editStart" type="number" step="0.5" min="0" placeholder="lbs"><span style="font-size:12px;color:var(--text2);margin-left:4px">lbs</span></div>
-    <div class="modal-row"><span class="modal-lbl">Increment / week</span><input class="modal-inp" id="editInc" type="number" step="0.5" min="0" placeholder="lbs"><span style="font-size:12px;color:var(--text2);margin-left:4px">lbs</span></div>
-    <div style="font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:4px">Weight auto-progresses each week by this amount. Hold at any week if not all sets completed.</div>
+    <div class="modal-row"><span class="modal-lbl">Increment / session</span><input class="modal-inp" id="editInc" type="number" step="0.5" min="0" placeholder="lbs"><span style="font-size:12px;color:var(--text2);margin-left:4px">lbs</span></div>
+    <div class="modal-row"><span class="modal-lbl">Rep range</span><input class="modal-inp" id="editRlo" type="number" step="1" min="1" placeholder="8" style="max-width:56px"><span style="color:var(--text2);font-size:13px;margin:0 4px">–</span><input class="modal-inp" id="editRhi" type="number" step="1" min="1" placeholder="12" style="max-width:56px"><span style="font-size:12px;color:var(--text2);margin-left:4px">reps</span></div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:4px">Weight increases by the increment when all sets hit the top of the rep range with RIR ≤ 2.</div>
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closeModal()">Cancel</button>
       <button class="modal-save" onclick="saveModal()">Save & Apply</button>
@@ -849,6 +867,11 @@ let BODY_WT={};     // {dateStr: number (lbs)}
 let BURN_LOG={};    // {dateStr: number (kcal)}
 let CSTART={};      // {sessKey_exIdx: number} custom start weight
 let CINC={};        // {sessKey_exIdx: number} custom increment
+let REPS={};        // {skey: number} actual reps logged per set
+let RIR_LOG={};     // {skey: number} RIR per set
+let WOVERRIDE={};   // {ds_sessKey_exIdx: number} weight override per day
+let CRLO={};        // {sessKey_exIdx: number} custom rep range low
+let CRHI={};        // {sessKey_exIdx: number} custom rep range high
 let _editKey='';    // current exercise being edited
 
 function todayDow(){return new Date().getDay()}
@@ -875,11 +898,17 @@ function loadState(){
     BURN_LOG=JSON.parse(localStorage.getItem('fp_burn')||'{}');
     CSTART=JSON.parse(localStorage.getItem('fp_cstart')||'{}');
     CINC=JSON.parse(localStorage.getItem('fp_cinc')||'{}');
-  }catch(e){CW=1;SETS={};DONE={};PARTIAL={};OVERRIDES={};SNAP={};PSTART='';FOOD_LOG={};CUSTOM_FOODS=[];BODY_WT={};BURN_LOG={};CSTART={};CINC={}}
+    REPS=JSON.parse(localStorage.getItem('fp_reps')||'{}');
+    RIR_LOG=JSON.parse(localStorage.getItem('fp_rir')||'{}');
+    WOVERRIDE=JSON.parse(localStorage.getItem('fp_woverride')||'{}');
+    CRLO=JSON.parse(localStorage.getItem('fp_crlo')||'{}');
+    CRHI=JSON.parse(localStorage.getItem('fp_crhi')||'{}');
+  }catch(e){CW=1;SETS={};DONE={};PARTIAL={};OVERRIDES={};SNAP={};PSTART='';FOOD_LOG={};CUSTOM_FOODS=[];BODY_WT={};BURN_LOG={};CSTART={};CINC={};REPS={};RIR_LOG={};WOVERRIDE={};CRLO={};CRHI={}}
 }
 function saveState(){
   const k={fp_wk:CW,fp_sets:SETS,fp_done:DONE,fp_partial:PARTIAL,fp_overrides:OVERRIDES,fp_snap:SNAP,
-           fp_food:FOOD_LOG,fp_customfoods:CUSTOM_FOODS,fp_wt:BODY_WT,fp_burn:BURN_LOG,fp_cstart:CSTART,fp_cinc:CINC};
+           fp_food:FOOD_LOG,fp_customfoods:CUSTOM_FOODS,fp_wt:BODY_WT,fp_burn:BURN_LOG,fp_cstart:CSTART,fp_cinc:CINC,
+           fp_reps:REPS,fp_rir:RIR_LOG,fp_woverride:WOVERRIDE,fp_crlo:CRLO,fp_crhi:CRHI};
   try{Object.entries(k).forEach(([key,val])=>localStorage.setItem(key,JSON.stringify(val)));localStorage.setItem('fp_start',PSTART||'');}catch(e){}
 }
 
@@ -921,40 +950,65 @@ function updateBurnForToday(sess,total,done){
 }
 
 /* ============================================================  PROGRESSIVE OVERLOAD  */
-function customWeightFor(sess,exIdx,week){
-  const k=`${sess.key}_${exIdx}`;
-  if(CSTART[k]===undefined)return null;
-  const inc=CINC[k]??sess.exercises[exIdx].inc;
-  const val=Math.round((CSTART[k]+(week-1)*inc)*2)/2;
-  return val;
-}
 function planWeightNum(wStr){return parseFloat(wStr)||0}
-function effectiveWeight(sess,exIdx,week){
-  const ex=sess.exercises[exIdx];
-  const plan=ex.wks[week-1];
-  // Determine base weight (custom start or plan)
-  const cw=customWeightFor(sess,exIdx,week);
-  const wNum=cw!==null?cw:planWeightNum(plan.w);
-  const wStr=cw!==null?`${wNum} lb`:plan.w;
-  const base={s:plan.s,r:plan.r,w:wStr,wNum};
-
-  if(week<=1)return{...base,held:false,heldFrom:null,plannedW:wStr};
-  const prevDone=DONE[dkey(sess.key,exIdx,week-1)];
-  if(prevDone===false){
-    const prev=effectiveWeight(sess,exIdx,week-1);
-    return{s:plan.s,r:plan.r,w:prev.w,wNum:prev.wNum,held:true,heldFrom:week-1,plannedW:wStr};
+function getRepRange(sess,exIdx){
+  const k=`${sess.key}_${exIdx}`;
+  const planR=typeof sess.exercises[exIdx].wks[0].r==='number'?sess.exercises[exIdx].wks[0].r:8;
+  return[CRLO[k]??planR,CRHI[k]??(planR+4)];
+}
+function computeEffectiveState(sess,exIdx){
+  const k=`${sess.key}_${exIdx}`;
+  const inc=CINC[k]??sess.exercises[exIdx].inc;
+  const[rlo,rhi]=getRepRange(sess,exIdx);
+  const numSets=sess.exercises[exIdx].wks[0].s;
+  const prefix=`_${sess.key}_${exIdx}_`;
+  const todayDS=getDS();
+  const dateSet=new Set();
+  Object.keys(REPS).forEach(rk=>{const idx=rk.indexOf(prefix);if(idx>0)dateSet.add(rk.substring(0,idx));});
+  const histDates=[...dateSet].filter(d=>d<todayDS).sort();
+  let weight=CSTART[k]??planWeightNum(sess.exercises[exIdx].wks[0].w);
+  let targetReps=rlo;
+  for(const d of histDates){
+    const repsArr=[],rirArr=[];
+    for(let s=0;s<numSets;s++){
+      const sk=`${d}${prefix}${s}`;
+      repsArr.push(REPS[sk]||0);
+      const r=RIR_LOG[sk];rirArr.push(r!==undefined?r:null);
+    }
+    if(!repsArr.some(r=>r>0))continue;
+    const allAtTop=repsArr.every(r=>r>=rhi);
+    const goodRir=rirArr.every(r=>r===null||r<=2);
+    const allMetTarget=repsArr.every(r=>r>=targetReps);
+    if(allAtTop&&goodRir){weight=Math.round((weight+inc)*4)/4;targetReps=rlo;}
+    else if(allMetTarget&&targetReps<rhi){targetReps=Math.min(targetReps+2,rhi);}
   }
-  return{...base,held:false,heldFrom:null,plannedW:wStr};
+  const ovk=`${todayDS}_${sess.key}_${exIdx}`;
+  const override=WOVERRIDE[ovk];
+  return{weight:override??weight,baseWeight:weight,targetReps,numSets,inc,rlo,rhi};
+}
+function getSessionStatus(sess,exIdx){
+  const{weight,targetReps,numSets,inc,rlo,rhi}=computeEffectiveState(sess,exIdx);
+  const doneSets=[];
+  for(let s=0;s<numSets;s++){
+    const sk=skey(sess.key,exIdx,s);
+    if(SETS[sk]){const reps=REPS[sk];const rir=RIR_LOG[sk];doneSets.push({reps:reps||0,rir:rir!==undefined?rir:null});}
+  }
+  if(!doneSets.length)return null;
+  if(doneSets.length<numSets)return{type:'partial',msg:`${doneSets.length}/${numSets} sets done`};
+  const allAtTop=doneSets.every(s=>s.reps>=rhi);
+  const goodRir=doneSets.every(s=>s.rir===null||s.rir<=2);
+  if(allAtTop&&goodRir)return{type:'up',msg:`+${inc} lbs next session — reps reset to ${rlo}`};
+  if(doneSets.every(s=>s.reps>=targetReps)&&targetReps<rhi)return{type:'add',msg:`Hold ${weight} lbs — aim for ${Math.min(targetReps+2,rhi)} reps next session`};
+  return{type:'hold',msg:`Rep target not fully met — hold at ${weight} lbs`};
 }
 function isExDone(sess,exIdx){
-  const n=sess.exercises[exIdx].wks[viewedCW()-1].s;
-  for(let s=0;s<n;s++)if(!SETS[skey(sess.key,exIdx,s)])return false;
-  return n>0;
+  const{numSets}=computeEffectiveState(sess,exIdx);
+  for(let s=0;s<numSets;s++)if(!SETS[skey(sess.key,exIdx,s)])return false;
+  return numSets>0;
 }
 function updateDone(sess,exIdx){
   const k=dkey(sess.key,exIdx,viewedCW());
-  const allDone=isExDone(sess,exIdx);
-  DONE[k]=allDone&&!PARTIAL[k];
+  DONE[k]=isExDone(sess,exIdx);
 }
 
 function initPStart(){
@@ -1144,10 +1198,13 @@ function openEditor(sessKey,exIdx){
   const sess=SESSIONS[sessKey];if(!sess)return;
   const ex=sess.exercises[exIdx];
   const k=`${sessKey}_${exIdx}`;
+  const[rlo,rhi]=getRepRange(sess,exIdx);
   document.getElementById('editTitle').textContent=ex.name;
   document.getElementById('editSub').textContent=`${sess.name} · ${ex.muscle}`;
   document.getElementById('editStart').value=CSTART[k]??planWeightNum(ex.wks[0].w);
   document.getElementById('editInc').value=CINC[k]??ex.inc;
+  document.getElementById('editRlo').value=CRLO[k]??rlo;
+  document.getElementById('editRhi').value=CRHI[k]??rhi;
   _editKey=k;
   document.getElementById('editModal').classList.add('on');
 }
@@ -1155,8 +1212,12 @@ function closeModal(){document.getElementById('editModal').classList.remove('on'
 function saveModal(){
   const start=parseFloat(document.getElementById('editStart').value);
   const inc=parseFloat(document.getElementById('editInc').value);
+  const rlo=parseInt(document.getElementById('editRlo').value);
+  const rhi=parseInt(document.getElementById('editRhi').value);
   if(isNaN(start)||isNaN(inc))return;
   CSTART[_editKey]=start;CINC[_editKey]=inc;
+  if(!isNaN(rlo))CRLO[_editKey]=rlo;
+  if(!isNaN(rhi))CRHI[_editKey]=rhi;
   saveState();closeModal();renderToday();renderProgress();
 }
 
@@ -1205,17 +1266,33 @@ function toggleSet(sessKey,exIdx,setIdx){
   const sess=SESSIONS[sessKey];
   if(sess){
     updateDone(sess,exIdx);
-    // recompute burn
     let total=0,done=0;
-    sess.exercises.forEach((ex,ei)=>{const ew=effectiveWeight(sess,ei,viewedCW());total+=ew.s;for(let s=0;s<ew.s;s++)if(SETS[skey(sess.key,ei,s)])done++;});
+    sess.exercises.forEach((ex,ei)=>{const es=computeEffectiveState(sess,ei);total+=es.numSets;for(let s=0;s<es.numSets;s++)if(SETS[skey(sess.key,ei,s)])done++;});
     updateBurnForToday(sess,total,done);
   }
   saveState();renderToday();
 }
+function onRepInput(sessKey,exIdx,setIdx,val){
+  const k=skey(sessKey,exIdx,setIdx);
+  const n=parseInt(val);
+  if(!isNaN(n)&&n>0)REPS[k]=n;else delete REPS[k];
+  saveState();
+}
+function onRirInput(sessKey,exIdx,setIdx,val){
+  const k=skey(sessKey,exIdx,setIdx);
+  if(val!=='')RIR_LOG[k]=parseInt(val);else delete RIR_LOG[k];
+  saveState();
+}
+function setWeightOverride(sessKey,exIdx,val){
+  const k=`${getDS()}_${sessKey}_${exIdx}`;
+  const n=parseFloat(val);
+  if(!isNaN(n)&&n>0)WOVERRIDE[k]=n;else delete WOVERRIDE[k];
+  saveState();renderToday();
+}
 function resetWorkoutData(){
-  if(!confirm('Clear all workout tracking data (sets, weights, progress)? Food log and body weight will be kept.'))return;
-  SETS={};DONE={};PARTIAL={};OVERRIDES={};SNAP={};BURN_LOG={};CSTART={};CINC={};DOF=0;
-  ['fp_sets','fp_done','fp_partial','fp_overrides','fp_snap','fp_burn','fp_cstart','fp_cinc'].forEach(k=>localStorage.removeItem(k));
+  if(!confirm('Clear all workout tracking data (sets, reps, weights, progress)? Food log and body weight will be kept.'))return;
+  SETS={};DONE={};PARTIAL={};OVERRIDES={};SNAP={};BURN_LOG={};CSTART={};CINC={};REPS={};RIR_LOG={};WOVERRIDE={};CRLO={};CRHI={};DOF=0;
+  ['fp_sets','fp_done','fp_partial','fp_overrides','fp_snap','fp_burn','fp_cstart','fp_cinc','fp_reps','fp_rir','fp_woverride','fp_crlo','fp_crhi'].forEach(k=>localStorage.removeItem(k));
   saveState();renderAll();
 }
 
@@ -1295,9 +1372,8 @@ function renderCardioDay(sess,isMakeup=false){
 
 function renderWorkoutDay(sess,isMakeup=false){
   const cw=viewedCW(),wi=cw-1,ph=phase(cw),ds=getDS();
-  const sk=false;
   let total=0,done=0;
-  sess.exercises.forEach((ex,ei)=>{const ew=effectiveWeight(sess,ei,cw);total+=ew.s;for(let s=0;s<ew.s;s++)if(SETS[skey(sess.key,ei,s)])done++;});
+  sess.exercises.forEach((ex,ei)=>{const es=computeEffectiveState(sess,ei);total+=es.numSets;for(let s=0;s<es.numSets;s++)if(SETS[skey(sess.key,ei,s)])done++;});
   const pct=total>0?Math.round(done/total*100):0;
   const burn=estimateBurn(sess.key,cw,total>0?done/total:0);
 
@@ -1323,30 +1399,57 @@ function renderWorkoutDay(sess,isMakeup=false){
   out+=`<div class="sec-hd">Exercises</div>`;
 
   sess.exercises.forEach((ex,ei)=>{
-    const ew=effectiveWeight(sess,ei,cw);
+    const es=computeEffectiveState(sess,ei);
     const exDone=isExDone(sess,ei);
-    const doneFlag=DONE[dkey(sess.key,ei,cw)];
-    let nextW=null;
-    if(cw<6){const nd=DONE[dkey(sess.key,ei,cw)];if(nd===true)nextW=effectiveWeight(sess,ei,cw+1).w;else if(nd===false)nextW=ew.w;}
-    let dots='';
-    for(let s=0;s<ew.s;s++){const k=skey(sess.key,ei,s);const dn=SETS[k];dots+=`<div class="sdot${dn?' done':''}" onclick="toggleSet('${sess.key}',${ei},${s})">${dn?'✓':s+1}</div>`;}
-    let olInd='';
-    if(exDone&&cw<6&&nextW)olInd=`<div class="ol-ind ol-unlock">🔓 Progress unlocked<span class="ol-target">Next: ${nextW}</span></div>`;
-    else if(exDone&&cw===6)olInd=`<div class="ol-ind ol-unlock">🏆 Week 6 — personal best!</div>`;
-    else if(doneFlag===false&&cw>1)olInd=`<div class="ol-ind ol-held">⏸ Held${ew.plannedW!==ew.w?` — plan was ${ew.plannedW}`:''}</div>`;
+    const ovk=`${ds}_${sess.key}_${ei}`;
+    const ovVal=WOVERRIDE[ovk]||'';
 
-    out+=`<div class="ex-card${ew.held?' ex-held':(exDone?' ex-done':'')}">
+    let setRows=`<div class="set-hdr"><span></span><span>Reps done</span><span>RIR</span><span></span></div>`;
+    for(let s=0;s<es.numSets;s++){
+      const sk=skey(sess.key,ei,s);
+      const isDone=!!SETS[sk];
+      const repsVal=REPS[sk]!==undefined?REPS[sk]:'';
+      const rirVal=RIR_LOG[sk]!==undefined?RIR_LOG[sk]:'';
+      setRows+=`<div class="set-track-row">
+        <span class="str-lbl">S${s+1}</span>
+        <input class="str-inp${isDone?' done':''}" type="number" min="1" max="40" inputmode="numeric"
+          placeholder="${es.targetReps}" value="${repsVal}"
+          onchange="onRepInput('${sess.key}',${ei},${s},this.value)">
+        <select class="str-sel${rirVal!==''?' picked':''}" onchange="onRirInput('${sess.key}',${ei},${s},this.value)">
+          <option value="">RIR</option>
+          <option value="3"${rirVal===3||rirVal==='3'?' selected':''}>3+</option>
+          <option value="2"${rirVal===2||rirVal==='2'?' selected':''}>2</option>
+          <option value="1"${rirVal===1||rirVal==='1'?' selected':''}>1</option>
+          <option value="0"${rirVal===0?' selected':''}>0</option>
+        </select>
+        <div class="sdot2${isDone?' done':''}" onclick="toggleSet('${sess.key}',${ei},${s})">${isDone?'✓':''}</div>
+      </div>`;
+    }
+
+    const status=getSessionStatus(sess,ei);
+    let statusHtml='';
+    if(status&&status.type!=='partial'){
+      const cls=status.type==='up'?'ol-up':status.type==='add'?'ol-add':'ol-hold';
+      const ico=status.type==='up'?'⬆️':status.type==='add'?'➕':'⏸';
+      statusHtml=`<div class="ol-status ${cls}">${ico} ${status.msg}</div>`;
+    }
+
+    out+=`<div class="ex-card${exDone?' ex-done':''}">
       <div class="ex-main">
         <div class="ex-top">
           <div>
             <div class="ex-name">${ex.name} <span class="edit-ico" onclick="openEditor('${sess.key}',${ei})">✏️</span></div>
             <div class="ex-muscle">${ex.muscle}</div>
           </div>
-          <div class="ex-badge${ew.held?' held':''}">${ew.s}×${ew.r}<small>${ew.w}</small></div>
+          <div class="ex-badge">${es.numSets}×${es.targetReps}–${es.rhi}<small>${es.weight} lbs</small></div>
         </div>
-        <div class="set-row">${dots}</div>
-        ${exDone?`<button class="partial-btn ${PARTIAL[dkey(sess.key,ei,cw)]?'partial-part':'partial-full'}" onclick="togglePartial('${sess.key}',${ei})">${PARTIAL[dkey(sess.key,ei,cw)]?'⚠ Partial Reps — weight held':'🎯 Full Reps ✓'}</button>`:''}
-        ${olInd}
+        <div class="wt-ovr-row">
+          <span class="wt-ovr-lbl">Override today's weight</span>
+          <input class="wt-ovr-inp" type="number" step="2.5" placeholder="${es.baseWeight}"
+            value="${ovVal}" onchange="setWeightOverride('${sess.key}',${ei},this.value)">
+        </div>
+        ${setRows}
+        ${statusHtml}
       </div>
       <div class="cue-row" onclick="toggleCue(this)"><span class="cue-ico">💡</span><span class="cue-txt">${ex.cue}</span></div>
     </div>`;
