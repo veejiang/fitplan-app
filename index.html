@@ -199,6 +199,20 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .sec-hd{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px}
 .sec-hd:first-child{margin-top:0}
 .partial-btn{display:none}
+.setup-sess{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.setup-sess-hdr{font-size:14px;font-weight:700;margin-bottom:10px}
+.setup-row{padding:10px 0;border-bottom:1px solid var(--border)}
+.setup-row:last-child{border-bottom:none}
+.setup-exname{font-size:14px;font-weight:700}
+.setup-muscle{font-size:11px;color:var(--accent);font-weight:600;margin-left:7px}
+.setup-fields{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.setup-field{display:flex;flex-direction:column;gap:3px}
+.setup-lbl{font-size:10px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.setup-inp-wrap{display:flex;align-items:center;gap:5px}
+.setup-inp{width:68px;font-size:14px;font-weight:700;padding:6px 7px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);text-align:center;outline:none}
+.setup-inp:focus{border-color:var(--accent)}
+.setup-inp.set{border-color:var(--accent)}
+.setup-unit{font-size:11px;color:var(--text2)}
 .set-hdr{display:grid;grid-template-columns:26px 1fr 62px 28px;gap:7px;padding:0 0 5px;border-bottom:1px solid var(--border);margin-bottom:2px}
 .set-hdr span{font-size:10px;color:var(--text2);font-weight:600}
 .set-track-row{display:grid;grid-template-columns:26px 1fr 62px 28px;gap:7px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
@@ -975,7 +989,8 @@ function computeEffectiveState(sess,exIdx){
       repsArr.push(REPS[sk]||0);
       const r=RIR_LOG[sk];rirArr.push(r!==undefined?r:null);
     }
-    if(!repsArr.some(r=>r>0))continue;
+    const allSetsDone=Array.from({length:numSets},(_,s)=>SETS[`${d}${prefix}${s}`]===true).every(Boolean);
+    if(!allSetsDone)continue;
     const allAtTop=repsArr.every(r=>r>=rhi);
     const goodRir=rirArr.every(r=>r===null||r<=2);
     const allMetTarget=repsArr.every(r=>r>=targetReps);
@@ -1194,6 +1209,16 @@ function wtChart(){
 }
 
 /* ============================================================  EXERCISE EDITOR  */
+function saveExField(sessKey,exIdx,field,val){
+  const k=`${sessKey}_${exIdx}`;
+  const n=field==='rlo'||field==='rhi'?parseInt(val):parseFloat(val);
+  if(isNaN(n)||n<=0)return;
+  if(field==='start')CSTART[k]=n;
+  else if(field==='inc')CINC[k]=n;
+  else if(field==='rlo')CRLO[k]=n;
+  else if(field==='rhi')CRHI[k]=n;
+  saveState();
+}
 function openEditor(sessKey,exIdx){
   const sess=SESSIONS[sessKey];if(!sess)return;
   const ex=sess.exercises[exIdx];
@@ -1704,14 +1729,67 @@ function renderProgress(){
 
 /* ============================================================  REFERENCE TAB  */
 function renderRef(){
+  const setupSections=Object.values(SESSIONS).filter(s=>s.exercises&&s.exercises.length).map(sess=>{
+    const rows=sess.exercises.map((ex,ei)=>{
+      const k=`${sess.key}_${ei}`;
+      const[rlo,rhi]=getRepRange(sess,ei);
+      const startVal=CSTART[k]!==undefined?CSTART[k]:'';
+      const incVal=CINC[k]!==undefined?CINC[k]:'';
+      const rloVal=CRLO[k]!==undefined?CRLO[k]:'';
+      const rhiVal=CRHI[k]!==undefined?CRHI[k]:'';
+      return`<div class="setup-row">
+        <div class="setup-exname">${ex.name}<span class="setup-muscle">${ex.muscle}</span></div>
+        <div class="setup-fields">
+          <div class="setup-field">
+            <span class="setup-lbl">Start weight</span>
+            <div class="setup-inp-wrap">
+              <input class="setup-inp${startVal!==''?' set':''}" type="number" step="0.5" min="0"
+                placeholder="${planWeightNum(ex.wks[0].w)||'—'}" value="${startVal}"
+                onchange="saveExField('${sess.key}',${ei},'start',this.value);this.classList.toggle('set',this.value!='')">
+              <span class="setup-unit">lbs</span>
+            </div>
+          </div>
+          <div class="setup-field">
+            <span class="setup-lbl">Increment</span>
+            <div class="setup-inp-wrap">
+              <input class="setup-inp${incVal!==''?' set':''}" type="number" step="0.5" min="0"
+                placeholder="${ex.inc}" value="${incVal}"
+                onchange="saveExField('${sess.key}',${ei},'inc',this.value);this.classList.toggle('set',this.value!='')">
+              <span class="setup-unit">lbs</span>
+            </div>
+          </div>
+          <div class="setup-field">
+            <span class="setup-lbl">Rep range</span>
+            <div class="setup-inp-wrap">
+              <input class="setup-inp${rloVal!==''?' set':''}" type="number" step="1" min="1" style="width:52px"
+                placeholder="${rlo}" value="${rloVal}"
+                onchange="saveExField('${sess.key}',${ei},'rlo',this.value);this.classList.toggle('set',this.value!='')">
+              <span style="color:var(--text2);font-size:13px">–</span>
+              <input class="setup-inp${rhiVal!==''?' set':''}" type="number" step="1" min="1" style="width:52px"
+                placeholder="${rhi}" value="${rhiVal}"
+                onchange="saveExField('${sess.key}',${ei},'rhi',this.value);this.classList.toggle('set',this.value!='')">
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return`<div class="setup-sess"><div class="setup-sess-hdr">${sess.emoji} ${sess.name}</div>${rows}</div>`;
+  }).join('');
+
   let out=`<div class="scroll-tabs">
-    <div class="stab on" onclick="showRef('overload',this)">Overload</div>
+    <div class="stab on" onclick="showRef('setup',this)">Setup</div>
+    <div class="stab" onclick="showRef('overload',this)">Overload</div>
     <div class="stab" onclick="showRef('glutes',this)">Glutes</div>
     <div class="stab" onclick="showRef('cardio',this)">Cardio</div>
     <div class="stab" onclick="showRef('recovery',this)">Recovery</div>
     <div class="stab" onclick="showRef('glossary',this)">Glossary</div>
   </div>
-  <div id="ref-overload" class="ref-sec on">
+  <div id="ref-setup" class="ref-sec on">
+    <div class="sec-hd">Exercise Setup</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Set your starting weight, increment, and rep range for each exercise. These auto-populate your workouts and drive progression.</div>
+    ${setupSections}
+  </div>
+  <div id="ref-overload" class="ref-sec">
     <div class="sec-hd">Progressive Overload</div>
     ${coll('Rules & Triggers','📈',`
       <div class="rule-row"><span class="rico">✅</span><div><strong>Complete all sets</strong> → green 🔓 badge → weight auto-progresses next session.</div></div>
